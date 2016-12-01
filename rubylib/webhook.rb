@@ -24,7 +24,8 @@ module AK_webhook_helper
 
     currentyear = Date.today.year
 
-    year = 2007
+    # Year to start checking from. NSW publishes XML toc's from 1991
+    year = 1990
   
     transcripts_found = 0
   

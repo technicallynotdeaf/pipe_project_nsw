@@ -45,7 +45,7 @@ class JSONDownloader
 
       # then we read and load the JSON
       # and request each fragment for each day... 
-#       downloadToc(toc_saphFilename) 
+#       downloadToc(toc_nswph_filename) 
 
       # then get the hash of fragments from each TOC file... 
 
@@ -64,8 +64,9 @@ class JSONDownloader
 
     puts "Parsing annual index #{annualIndexFilename}" if $debug
     rawJSON = File.read(annualIndexFilename)
-    loadedJSON = JSON.load rawJSON # Why is this returning a String!?
-    parsedJSON = JSON.load loadedJSON # Needs to be parsed twice (!?)
+    parsedJSON = JSON.load rawJSON # Why is this returning a String!?
+    #loadedJSON = JSON.load rawJSON # Why is this returning a String!?
+    #parsedJSON = JSON.load loadedJSON # Needs to be parsed twice (!?)
 
 
 #    @outputfile << "\n<div class=\"col-sm-4\">"
@@ -138,7 +139,7 @@ class JSONDownloader
   # returns the file name.
   def downloadAnnualIndex(year)
 
-    @jsonDownloadYearURL = "https://hansardpublic.parliament.sa.gov.au/_vti_bin/Hansard/HansardData.svc/GetYearlyEvents/"
+    @jsonDownloadYearURL = "https://api.parliament.nsw.gov.au/api/hansard/search/year/"
     
     warn 'nil year supplied?' if(year == NIL) 
 
@@ -153,7 +154,7 @@ class JSONDownloader
 
 
   def open_html_output_page()
-    filename = "/var/www/pipeproject/sa/missing_files.php"
+    filename = "/var/www/pipeproject/nsw/missing_files.php"
     @outputfile = File.open(filename, "w")
     @outputfile << "\n<?php include \'../header.php\' ?>"
     @outputfile << "\n<div class=\"container\">"
