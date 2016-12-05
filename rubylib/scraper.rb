@@ -1,18 +1,16 @@
 
-# Scraper to download SA Hansard XML files using API
+# Scraper to download NSW Hansard XML files using API
 # 
 # In order to facilitate automatically downloading each day's hansard
 # without having to manually download and save each day
 # 
-# This version of code hacked together by Alison Keen Nov 2016
+# This version of code hacked together by Alison Keen Dec 2016
 #
-# SA Parliament Hansard API Docs are here: 
+# NSW Parliament Hansard API Docs are here: 
 # 
-# https://parliament-api-docs.readthedocs.io/en/latest/south-australia/#read-data 
+# https://parliament-api-docs.readthedocs.io/en/latest/new-south-wales/
 #
 # Apologies for flagrant violation of coding conventions.
-# I think I realised halfway through this one you're supposed to use
-# camelCase for variables... oops 
 
 require 'scraperwiki'
 require 'json'
@@ -48,7 +46,7 @@ class JSONDownloader
 
       # then we read and load the JSON
       # and request each fragment for each day... 
-#       downloadToc(toc_saphFilename) 
+#       downloadToc(nswph_toc_filename) 
 
       # then get the hash of fragments from each TOC file... 
 
@@ -56,7 +54,24 @@ class JSONDownloader
 
   end
 
-  # read horrible JSON file and get toc filenames
+  # Puts the raw, no-line-breaks JSON into a file and
+  # returns the file name.
+  def downloadAnnualIndex(year)
+
+    @jsonDownloadYearURL = "https://api.parliament.nsw.gov.au/api/hansard/search/year/"
+    
+    warn 'nil year supplied?' if(year == NIL) 
+
+    urlToLoad = @jsonDownloadYearURL + year.to_s
+    filename = PIPEConf::JSON_INDEX_DIR + "#{year.to_s}_hansard.json"
+    
+    puts "downloading file #{filename}" if $debug  
+    `curl --silent --output #{filename} "#{urlToLoad}"`
+ 
+    filename # The output of the method. ruby doesn't use 'return'
+  end
+
+  # read JSON file and get toc filenames
   def get_each_toc_filename(annual_index_filename)
 
     #  Manual Download Link: 
@@ -81,15 +96,15 @@ class JSONDownloader
 
       event['Events'].each do |record| # for each transcript on date
 #        puts "\nEvent: " + record.to_s if $debug
-        saphFilename = record['TocDocId'].to_s.strip
-        saphChamber = record['Chamber'].to_s
+        nswph_toc_filename = record['TocDocId'].to_s.strip
+        nswph_chamber = record['Chamber'].to_s
    
 
-        if !saphFilename.empty? then
+        if !nswph_toc_filename.empty? then
           #Output is here: 
 
-#            puts "\"#{saphFilename}\",\"#{record_date}\",\"#{saphChamber}\"" 
-          downloaded_filename = PIPEConf::XML_TOC_DIR + saphFilename + ".xml"
+#            puts "\"#{nswph_toc_filename}\",\"#{record_date}\",\"#{nswph_chamber}\"" 
+          downloaded_filename = PIPEConf::XML_TOC_DIR + nswph_toc_filename + ".xml"
 
           if ( File.exists?(downloaded_filename) ) then 
 #            puts "#{downloaded_filename} already downloaded." if $debug
@@ -98,18 +113,11 @@ class JSONDownloader
 
           else 
             @transcripts_missing += 1
-#            puts "#{downloaded_filename} not found." if $debug
-            toc_download_link = @toc_link + saphFilename
-            @outputfile << "\n<div class=\"alert alert-warning\" role =\"alert\">"
-            @outputfile << "\n<p> <a href=\"#{toc_download_link}\">"
-            @outputfile << "<strong>Missing: </strong> #{saphFilename}"
-            @outputfile << " </a>(#{record_date} - #{saphChamber})</p>"
-            @outputfile << "\n</div>"
+            download_toc_file(nswph_toc_filename)
 
           end
 
         end
-
 
       end # end for-each-transcript-on-date block
       
@@ -129,6 +137,25 @@ class JSONDownloader
     @transcripts_found #return number of transcripts found
 
   end
+  # read JSON file and get toc filenames
+  def download_toc_file(nswph_toc_filename)
+
+    # TOC XML file download Link: 
+    @toc_link = "https://api.parliament.nsw.gov.au/api/hansard/search/daily/tableofcontents/"
+
+    downloaded_filename = PIPEConf::XML_TOC_DIR + nswph_toc_filename + ".xml"
+    puts "Downloading: #{downloaded_filename}"
+
+    if ( File.exists?(downloaded_filename) ) then 
+      puts "#{downloaded_filename} already downloaded." if $debug
+
+    else 
+      puts "#{downloaded_filename} not found." if $debug
+      toc_download_link = @toc_link + nswph_toc_filename
+      `curl --silent --output #{downloaded_filename} "#{toc_download_link}"`
+    end
+
+  end
 
   def get_num_transcripts_found
     @total_found_transcripts
@@ -136,23 +163,6 @@ class JSONDownloader
  
   def get_num_transcripts_missing
     @total_missing_transcripts
-  end
-
-  # Puts the raw, no-line-breaks JSON into a file and
-  # returns the file name.
-  def downloadAnnualIndex(year)
-
-    @jsonDownloadYearURL = "https://api.parliament.nsw.gov.au/api/hansard/search/year/"
-    
-    warn 'nil year supplied?' if(year == NIL) 
-
-    urlToLoad = @jsonDownloadYearURL + year.to_s
-    filename = PIPEConf::JSON_INDEX_DIR + "#{year.to_s}_hansard.json"
-    
-    puts "downloading file #{filename}" if $debug  
-    `curl --silent --output #{filename} "#{urlToLoad}"`
- 
-    filename # The output of the method. ruby doesn't use 'return'
   end
 
 

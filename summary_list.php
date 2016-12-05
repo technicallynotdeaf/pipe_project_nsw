@@ -4,7 +4,7 @@
 <div class="container">
 <!-- Title -->
 <div class="row"> <div class="col-lg-12">
-	<h2>Available Summaries - South Australia</h2>
+	<h2>Available Summaries - New South Wales</h2>
     </div> </div>
 <!-- /.row -->
 
