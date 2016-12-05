@@ -1,8 +1,6 @@
 #!/bin/ruby
 
-# To skip to main code, search down to 'webhook' 
-# 
-# Code written by Alison Keen Nov 2016
+# Code written by Alison Keen Nov/Dec 2016
 # 
 # Feel free to appropriate it as you see fit, it's a gift (or curse?)
 # depending on how much it is actually helpful vs painful.. 
@@ -28,12 +26,13 @@ module AK_webhook_helper
 
     currentyear = Date.today.year
 
-    year = 2007
+    year = 1990 # year to start from
   
     transcripts_found = 0
   
     json_handler = JSONDownloader.new
-  
+ 
+    # This just puts the header tags into the page first 
     json_handler.open_html_output_page()
   
     while year <= currentyear
@@ -41,6 +40,7 @@ module AK_webhook_helper
        year += 1
     end
   
+    # Adds php include 'footer.php' line
     json_handler.close_html_output_page()
 
     result = (json_handler.get_num_transcripts_missing > 0) ? true : false

@@ -60,21 +60,21 @@ class JSONDownloader
   def get_each_toc_filename(annual_index_filename)
 
     #  Manual Download Link: 
-    @manual_toc_link = "http://hansardpublic.parliament.sa.gov.au/_layouts/15/Hansard/DownloadHansardFile.ashx?t=tocxml&d="
+    @toc_link = "https://api.parliament.nsw.gov.au/api/hansard/search/daily/tableofcontents/"
 
     @transcripts_found = 0
     @transcripts_missing = 0
 
     puts "Parsing annual index #{annual_index_filename}" if $debug
     rawJSON = File.read(annual_index_filename)
-    loadedJSON = JSON.load rawJSON # Why is this returning a String!?
-    parsedJSON = JSON.load loadedJSON # Needs to be parsed twice (!?)
+    
+    parsedJSON = JSON.load rawJSON 
 
 
 #    @outputfile << "\n<div class=\"col-sm-4\">"
 
     parsedJSON.each do |event| # for-each-date
-#      puts event.keys if $debug
+      puts event.keys if $debug
       record_date =  event['date'].to_s
 
 #      puts "Available for..." + record_date if $debug
@@ -99,7 +99,7 @@ class JSONDownloader
           else 
             @transcripts_missing += 1
 #            puts "#{downloaded_filename} not found." if $debug
-            toc_download_link = @manual_toc_link + saphFilename
+            toc_download_link = @toc_link + saphFilename
             @outputfile << "\n<div class=\"alert alert-warning\" role =\"alert\">"
             @outputfile << "\n<p> <a href=\"#{toc_download_link}\">"
             @outputfile << "<strong>Missing: </strong> #{saphFilename}"
@@ -142,7 +142,7 @@ class JSONDownloader
   # returns the file name.
   def downloadAnnualIndex(year)
 
-    @jsonDownloadYearURL = "https://hansardpublic.parliament.sa.gov.au/_vti_bin/Hansard/HansardData.svc/GetYearlyEvents/"
+    @jsonDownloadYearURL = "https://api.parliament.nsw.gov.au/api/hansard/search/year/"
     
     warn 'nil year supplied?' if(year == NIL) 
 
@@ -157,7 +157,7 @@ class JSONDownloader
 
 
   def open_html_output_page()
-    filename = "/var/www/pipeproject/sa/missing_files.php"
+    filename = "/var/www/pipeproject/#{PIPEConf::STATE}/missing_files.php"
     @outputfile = File.open(filename, "w")
     @outputfile << "\n<?php include \'../header.php\' ?>"
     @outputfile << "\n<div class=\"container\">"

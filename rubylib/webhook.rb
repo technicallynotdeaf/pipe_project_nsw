@@ -27,11 +27,10 @@ if AK_webhook_helper.are_there_missing_files
   puts "Files are missing." if $DEBUG
   line1 = "Hi Admin! \nNew Files Need Downloading. "
   line2 = "Download them here: " 
-  line3 = "\n http://sa.pipeproject.info/missing_files.php "
+  line3 = "\n http://#{PIPEConf::STATE}.pipeproject.info/missing_files.php "
   email_text = line1 + line2 + line3
   subject_line = "Files need downloading."
   AKEmailHelper.send_admin_mail( subject_line, email_text )
-#  AKEmailHelper.send_admin_mail(subject_line)
 
 else
   puts "No files missing." if $DEBUG
