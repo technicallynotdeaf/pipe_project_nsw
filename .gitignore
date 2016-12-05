@@ -3,3 +3,6 @@
 *.json
 *.html
 summaries
+logs
+missing_files.php
+
