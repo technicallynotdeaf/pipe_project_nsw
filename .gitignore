@@ -2,7 +2,7 @@
 *.xml
 *.json
 *.html
-summaries
 logs
-missing_files.php
-
+summaries
+configuration.rb
+missing_files.php 
