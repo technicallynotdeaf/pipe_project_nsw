@@ -28,8 +28,8 @@ AK_webhook_helper.generate_transcript_summaries
 
 puts "Sending email.." if $DEBUG
 
-subject_line = "#{PIPEConf.STATE} Summaries Generated"
-email_text = "Hi! Summaries of all hansard TOC files handy are now up here: http://#{PIPEConf.STATE}.pipeproject.info/summary_list.php \n Cheers "
+subject_line = "#{PIPEConf::STATE} Summaries Generated"
+email_text = "Hi! Summaries of all hansard TOC files handy are now up here: http://#{PIPEConf::STATE}.pipeproject.info/summary_list.php \n Cheers "
 
 AKEmailHelper.send_admin_mail( subject_line, email_text )
 

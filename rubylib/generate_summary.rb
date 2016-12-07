@@ -5,7 +5,7 @@ require 'date'
 require_relative 'configuration'
 
 
-$DEBUG = FALSE
+$DEBUG = TRUE
 #  I need to class-ify the code structure LOTS MORE!!
 
 
@@ -41,6 +41,8 @@ def generateSummary (full_file_name)
   #------Identify Date ------------ # 
   
   datetimeStr = @doc.xpath("//date").first.to_s
+
+  puts "File: #{full_file_name} Date: #{datetimeStr}"
   
   d = Date.parse(datetimeStr)
   
@@ -70,7 +72,7 @@ def generateSummary (full_file_name)
   # Create a link to the actual Hansard for the day... 
   saph_filename = File.basename(full_file_name , ".xml")
 
-  date_display_url = "https://hansardpublic.parliament.sa.gov.au/Pages/DateDisplay.aspx#/DateDisplay/"
+  date_display_url = "https://www.parliament.nsw.gov.au/Hansard/Pages/HansardFull.aspx#/DateDisplay/"
 
   @outputfile << "\n<a href=\"#{date_display_url + saph_filename}\">"
 
